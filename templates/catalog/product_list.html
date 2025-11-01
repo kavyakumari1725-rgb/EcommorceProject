@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Products{% endblock %}
+{% block content %}
+<h2>{% if category %}{{ category.name }}{% else %}All Products{% endif %}</h2>
+<div class="grid">
+  {% for p in products %}
+  <article class="product">
+    <a href="{{ p.get_absolute_url }}">
+      {% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}">{% else %}<img src="https://picsum.photos/seed/{{ p.id }}/400/300" alt="placeholder">{% endif %}
+      <h3>{{ p.name }}</h3>
+    </a>
+    <p>£{{ p.price }}</p>
+    <form action="/cart/add/{{ p.id }}/" method="post">{% csrf_token %}
+      <input type="number" name="quantity" min="1" value="1">
+      <button type="submit">Add to cart</button>
+    </form>
+  </article>
+  {% empty %}<p>No products found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,4 @@
+Django==5.1.2
+pillow==11.0.0
+stripe==10.11.0
+python-dotenv==1.0.1
