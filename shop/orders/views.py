@@ -4,6 +4,7 @@ from shop.cart.cart import Cart
 from .forms import CheckoutForm
 from .models import Order, OrderItem
 
+
 def checkout(request):
     cart = Cart(request)
     if request.method == 'POST':
@@ -23,6 +24,7 @@ def checkout(request):
     else:
         form = CheckoutForm()
     return render(request, 'orders/checkout.html', {'form': form, 'cart': cart})
+
 
 def success(request):
     return render(request, 'orders/success.html')

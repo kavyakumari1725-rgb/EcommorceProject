@@ -1,13 +1,14 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
+from shop.catalog.models import Product
 from django.views.decorators.http import require_POST
 from .cart import Cart
 
 @require_POST
 def cart_add(request, product_id):
-    quantity = int(request.POST.get('quantity', 1))
-    Cart(request).add(product_id, quantity)
-    return redirect('cart:detail')
-
+    cart = Cart(request)
+    product = get_object_or_404(Product, id=product_id)
+    cart.add(product.id)
+    return redirect("cart:cart_detail")
 def cart_remove(request, product_id):
     Cart(request).remove(product_id)
     return redirect('cart:detail')

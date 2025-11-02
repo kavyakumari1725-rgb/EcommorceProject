@@ -6,4 +6,4 @@ class CheckoutForm(forms.Form):
     email = forms.EmailField()
     address = forms.CharField(max_length=250)
     city = forms.CharField(max_length=120)
-    postcode = forms.CharField(max_length=20)
+    postal_code = forms.CharField(max_length=20)
