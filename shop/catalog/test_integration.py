@@ -1,14 +1,15 @@
 from django.test import TestCase
 from django.urls import reverse
-from shop.catalog.models import Product
+from shop.catalog.models import Product, Category
 
 class CatalogIntegrationTests(TestCase):
     def setUp(self):
+        self.category = Category.objects.create(name="Test Category", slug="test-category")
         self.product = Product.objects.create(
+            category=self.category,
             name="Test Product",
             slug="test-product",
-            price=10.99,
-            is_active=True
+            price=100
         )
 
     def test_product_list_and_detail_flow(self):
