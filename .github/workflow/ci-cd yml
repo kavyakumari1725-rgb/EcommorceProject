@@ -1,74 +1,55 @@
-itname: Django CI/CD Pipeline
+name: Django CI/CD Pipeline
 
 on:
   push:
     branches: [ "main", "feature" ]
   pull_request:
-    branches: [ "main", "feature"]
+    branches: [ "main", "feature" ]
 
 jobs:
-  # ---------- CI: Build and Test ----------
-  test:
-    name: 🧪 Run Tests and Build Docker
+  build:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: shop
-          POSTGRES_USER: shop
-          POSTGRES_PASSWORD: shop
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U shop -d shop"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    strategy:
+      matrix:
+        python-version: [3.12]
 
     env:
       DJANGO_SETTINGS_MODULE: shop.settings
-      SECRET_KEY: test-secret-key
       DEBUG: 0
+      SECRET_KEY: test-secret-key
       ALLOWED_HOSTS: 127.0.0.1,localhost
-      DATABASE_URL: postgres://shop:shop@localhost:5432/shop
-
-    steps:
-      - name: 🛎️ Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: 📦 Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: ⚙️ Run Migrations
-        run: python manage.py migrate
-
-      - name: 🧪 Run Django Tests
-        run: python manage.py test
-
-      - name: 🐳 Build Docker Image
-        run: docker build -t django-ecommerce-starter .
-
-  # ---------- CD: Deploy to Docker Hub ----------
-  deploy:
-    name: 🚀 Build & Push to Docker Hub
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: 🛎️ Checkout code
         uses: actions/checkout@v4
 
-      - name: 🔐 Login to Docker Hub
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: ⚙️ Run migrations
+        run: python manage.py migrate
+
+      - name: 🧪 Run Django tests
+        run: python manage.py test
+
+  deploy:
+    name: 🚀 Build & Push to Docker Hub
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature'
+
+    steps:
+      - name: 🛎️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -79,4 +60,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/django-ecommerce-starter:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/ecommerceproject:latest
