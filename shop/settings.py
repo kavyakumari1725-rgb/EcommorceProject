@@ -83,3 +83,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Stripe placeholder (optional)
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_123')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_123')
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://ecommorceproject-3.onrender.com",
+    "https://ecommorceproject.onrender.com",
+    "https://www.myproductiondomain.com",
+]
