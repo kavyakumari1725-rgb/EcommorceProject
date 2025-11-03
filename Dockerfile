@@ -15,8 +15,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy dependency list & install
-COPY requirements.txt /app/
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy the rest of your project
@@ -26,4 +29,4 @@ COPY . /app/
 EXPOSE 8000
 
 # Run the Django development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:$PORT""]
