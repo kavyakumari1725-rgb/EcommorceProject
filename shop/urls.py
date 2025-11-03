@@ -6,9 +6,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("cart/", include(("shop.cart.urls", "cart"), namespace="cart")),
-    path("catalog/", include(("shop.catalog.urls", "catalog"), namespace="catalog")),
+    path("", include(("shop.catalog.urls", "catalog"), namespace="catalog")),
     path("orders/", include(("shop.orders.urls", "orders"), namespace="orders")),
-    path('', include('django_prometheus.urls')),
+    path("", include('django_prometheus.urls')),
 ]
 
 # ✅ Correct way to append static() URLs
